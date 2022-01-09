@@ -25,7 +25,7 @@ services:
     stop_signal: SIGINT
 
   packet-forwarder:
-    image: nebraltd/hm-pktfwd:77bfb42
+    image: jonzky/hm-pktfwd:04400ac
     depends_on:
       - helium-miner
     restart: always
@@ -36,7 +36,7 @@ services:
       - FIRMWARE_VERSION=2022.01.04.0-2
 
   helium-miner:
-    image: nebraltd/hm-miner:arm64-99d220e
+    image: jonzky/hm-miner:arm64-fae9b0d
     depends_on:
       - dbus-session
       - diagnostics
