@@ -15,5 +15,5 @@ jobs:
         uses: nebraltd/balena-cli-action@v12.54.5
         if: success()
         with:
-          balena_api_token: ${{secrets.BALENA_API_TOKEN}}
+          balena_api_token: ${{secrets.BALENA_API_KEY}}
           balena_command: "deploy jonzakay/helium_miner --logs --debug --nocache --build"
