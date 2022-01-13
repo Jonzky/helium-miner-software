@@ -8,7 +8,7 @@ services:
       - dbus-session
       - diagnostics
     environment:
-      - FIRMWARE_VERSION=2022.01.04.0-2
+      - FIRMWARE_VERSION=2022.01.12.1
       - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
       - DBUS_SESSION_BUS_ADDRESS=unix:path=/session/dbus/session_bus_socket
     privileged: true
@@ -25,7 +25,7 @@ services:
     stop_signal: SIGINT
 
   packet-forwarder:
-    image: jonzky/hm-pktfwd:04400ac
+    image: jonzky/hm-pktfwd:latest
     depends_on:
       - helium-miner
     restart: always
@@ -33,10 +33,10 @@ services:
     volumes:
       - pktfwdr:/var/pktfwd
     environment:
-      - FIRMWARE_VERSION=2022.01.04.0-2
+      - FIRMWARE_VERSION=2022.01.12.1
 
   helium-miner:
-    image: jonzky/hm-miner:arm64-fae9b0d
+    image: jonzky/hm-miner:latest
     depends_on:
       - dbus-session
       - diagnostics
@@ -58,13 +58,13 @@ services:
     environment:
       - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/session/dbus/session_bus_socket
       - RELEASE_BUMPER=foobar
-      - FIRMWARE_VERSION=2022.01.04.0-2
+      - FIRMWARE_VERSION=2022.01.12.1
 
   diagnostics:
-    image: nebraltd/hm-diag:6f323fe
+    image: jonzky/hm-diag:latest
     environment:
-      - FIRMWARE_VERSION=2022.01.04.0-2
-      - DIAGNOSTICS_VERSION=6f323fe
+      - FIRMWARE_VERSION=2022.01.12.1
+      - DIAGNOSTICS_VERSION=latest
       - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
     volumes:
       - pktfwdr:/var/pktfwd
@@ -88,7 +88,7 @@ services:
       - dbus:/session/dbus
     environment:
       - DBUS_ADDRESS=unix:path=/session/dbus/session_bus_socket
-      - FIRMWARE_VERSION=2022.01.04.0-2
+      - FIRMWARE_VERSION=2022.01.12.1
 
 volumes:
   miner-storage:
