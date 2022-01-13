@@ -1,0 +1,19 @@
+name: Deploy to BalenaCloud
+
+on: 
+  push:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Random sleep (balena API workaround)
+        run:  sleep $[ ( $RANDOM % 180 )  + 1 ]s
+      - name: Balena Deploy
+        uses: nebraltd/balena-cli-action@v12.54.5
+        if: success()
+        with:
+          balena_api_token: ${{secrets.BALENA_API_TOKEN}}
+          balena_command: "deploy jonzakay/helium_miner --logs --debug --nocache --build"
