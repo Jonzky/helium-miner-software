@@ -1,0 +1,96 @@
+version: '2'
+
+services:
+
+  gateway-config:
+    image: nebraltd/hm-config:900aeed
+    depends_on:
+      - dbus-session
+      - diagnostics
+    environment:
+      - FIRMWARE_VERSION=2022.01.12.1
+      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+      - DBUS_SESSION_BUS_ADDRESS=unix:path=/session/dbus/session_bus_socket
+    privileged: true
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - miner-storage:/var/data
+      - dbus:/session/dbus
+    labels:
+      io.balena.features.sysfs: 1
+      io.balena.features.kernel-modules: 1
+      io.balena.features.dbus: 1
+    stop_signal: SIGINT
+
+  packet-forwarder:
+    image: jonzky/hm-pktfwd:latest
+    depends_on:
+      - helium-miner
+    restart: always
+    privileged: true
+    volumes:
+      - pktfwdr:/var/pktfwd
+    environment:
+      - FIRMWARE_VERSION=2022.01.12.1
+
+  helium-miner:
+    image: jonzky/hm-miner:latest
+    depends_on:
+      - dbus-session
+      - diagnostics
+    expose:
+      - "1680"
+      - "4467"
+    ports:
+      - "44158:44158/tcp"
+    volumes:
+      - miner-storage:/var/data
+      - miner-log:/var/log/miner
+      - pktfwdr:/var/pktfwd
+      - dbus:/session/dbus
+    cap_add:
+      - SYS_RAWIO
+    devices:
+      - /dev/i2c-1:/dev/i2c-1
+    restart: on-failure
+    environment:
+      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/session/dbus/session_bus_socket
+      - RELEASE_BUMPER=foobar
+      - FIRMWARE_VERSION=2022.01.12.1
+
+  diagnostics:
+    image: jonzky/hm-diag:latest
+    environment:
+      - FIRMWARE_VERSION=2022.01.12.1
+      - DIAGNOSTICS_VERSION=latest
+      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+    volumes:
+      - pktfwdr:/var/pktfwd
+      - miner-storage:/var/data
+      - /sys:/sys:ro
+      - /lib/modules:/lib/modules:ro
+      - /run/dbus:/host/run/dbus
+    ports:
+      - "80:5000"
+    cap_add:
+      - SYS_RAWIO
+    devices:
+      - /dev/i2c-1:/dev/i2c-1
+    privileged: true
+
+  dbus-session:
+    image: balenablocks/dbus:rpi-0.0.2
+    restart: always
+    volumes:
+      - dbus:/session/dbus
+    environment:
+      - DBUS_ADDRESS=unix:path=/session/dbus/session_bus_socket
+      - FIRMWARE_VERSION=2022.01.12.1
+
+volumes:
+  miner-storage:
+  miner-log:
+  pktfwdr:
+  dbus:
