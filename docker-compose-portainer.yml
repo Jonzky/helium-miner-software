@@ -72,7 +72,7 @@ services:
       - /sys:/sys:ro
       - /lib/modules:/lib/modules:ro
       - /run/dbus:/host/run/dbus
-      - /proc:/proc:ro
+      - /proc:/proc
     ports:
       - "80:5000"
     cap_add:
