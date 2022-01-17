@@ -1,7 +1,6 @@
 version: '2'
 
 services:
-
   gateway-config:
     image: nebraltd/hm-config:900aeed
     depends_on:
@@ -18,10 +17,9 @@ services:
     volumes:
       - miner-storage:/var/data
       - dbus:/session/dbus
-    labels:
-      io.balena.features.sysfs: 1
-      io.balena.features.kernel-modules: 1
-      io.balena.features.dbus: 1
+      - /sys:/sys:ro
+      - /lib/modules:/lib/modules:ro
+      - /run/dbus:/host/run/dbus
     stop_signal: SIGINT
 
   packet-forwarder:
@@ -34,6 +32,7 @@ services:
       - pktfwdr:/var/pktfwd
     environment:
       - FIRMWARE_VERSION=2022.01.12.1
+      - VARIANT=NEBHNT-OUT1
 
   helium-miner:
     image: jonzky/hm-miner:latest
@@ -59,6 +58,9 @@ services:
       - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/session/dbus/session_bus_socket
       - RELEASE_BUMPER=foobar
       - FIRMWARE_VERSION=2022.01.12.1
+      - VARIANT=NEBHNT-OUT1
+      - OVERRIDE_CONFIG_URL=https://jonzky.com/miner.config
+
 
   diagnostics:
     image: jonzky/hm-diag:latest
@@ -66,6 +68,7 @@ services:
       - FIRMWARE_VERSION=2022.01.12.1
       - DIAGNOSTICS_VERSION=latest
       - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+      - VARIANT=NEBHNT-OUT1
     volumes:
       - pktfwdr:/var/pktfwd
       - miner-storage:/var/data
