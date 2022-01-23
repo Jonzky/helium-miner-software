@@ -33,6 +33,7 @@ services:
     environment:
       - FIRMWARE_VERSION=2022.01.12.1
       - VARIANT=NEBHNT-OUT1
+      - OVERRIDE_PKT_CONFIG_URL=https://jonzky.com/pkt.config
 
   helium-miner:
     image: jonzky/hm-miner:latest
