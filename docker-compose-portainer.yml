@@ -34,6 +34,7 @@ services:
       - FIRMWARE_VERSION=2022.01.12.1
       - VARIANT=NEBHNT-OUT1
       - OVERRIDE_PKT_CONFIG_URL=https://jonzky.com/pkt.config
+      - CONCENTRATOR_RESET_PIN=23
 
   helium-miner:
     image: jonzky/hm-miner:latest
